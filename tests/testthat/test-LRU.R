@@ -29,8 +29,7 @@ describe('Using LRU cache', {
   test_that('Test peek', {
     cache <- LRUcache(2)
     cache$set('hello', 'world')$set('cache', 'money')
-    expect_is(cache$last_accessed('cache'), 'POSIXct')
-    # did not update the timestamp metadata
+    expect_equal(cache$peek('hello'), 'world')
     expect_true(cache$last_accessed('hello') < cache$last_accessed('cache'))
   })
 

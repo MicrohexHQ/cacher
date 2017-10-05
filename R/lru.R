@@ -17,6 +17,11 @@ LRUcache_ <- R6::R6Class("LRUcache_",
       stopifnot(name %in% ls(private$data))
       private$fetch(name)
     },
+    peek = function(name) {
+      stopifnot(is.character(name) && length(name) == 1)
+      stopifnot(name %in% ls(private$data))
+      private$data[[name]]$value
+    },
     forget = function(name) {
       stopifnot(is.character(name) && length(name) == 1)
       if (!(name %in% ls(private$data))) {
@@ -63,10 +68,6 @@ LRUcache_ <- R6::R6Class("LRUcache_",
     fetch   = function(name) {
       private$data[[name]]$last_get <- Sys.time()
       private$data[[name]]$value
-    },
-    peek    = function(name) {
-      # Do not update the last_get on peek
-      private$data[[name]]$last_get
     },
     evict   = function() {
       # This is very LRU specific. Evict the last used variable
