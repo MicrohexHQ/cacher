@@ -33,6 +33,13 @@ describe('Using LRU cache', {
     expect_true(cache$last_accessed('hello') < cache$last_accessed('cache'))
   })
 
+  test_that('Test last_get', {
+    cache <- LRUcache(2)
+    cache$set('hello', 'world')$set('cache', 'money')
+    expect_is(cache$last_get('cache'), 'POSIXct')
+    expect_true(cache$last_accessed('hello') < cache$last_accessed('cache'))
+  })
+
   test_that('Test with byte size', {
     cache <- LRUcache('150B')
     cache$set('foo', 54.124)
