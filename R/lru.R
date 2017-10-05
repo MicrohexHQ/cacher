@@ -114,7 +114,8 @@ LRUcache_.character <- R6::R6Class("LRUcache_.character", inherit = LRUcache_,
         "B" = 0,
         "K" = 1,
         "M" = 2,
-        "G" = 3)
+        "G" = 3,
+        "T" = 4)
       qty * (1000 ^ pow) # pryr::object_size assumes 1KB = 1000B rather than 1024B
     },
     get_current_size = function() { # in bytes
