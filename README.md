@@ -1,4 +1,18 @@
-# cacher [![codecov.io](http://codecov.io/github/kirillseva/cacher/coverage.svg?branch=master)](http://codecov.io/github/kirillseva/cacher?branch=master)[![Build Status](https://travis-ci.org/kirillseva/cacher.svg)](https://travis-ci.org/kirillseva/cacher)
+# cacher
+
+***fork warning:*** this fork of [kirillseva/cacher](https://github.com/kirillseva/cacher)
+contains the following API-breaking changes:
+
+- `peek` returns the value, not the timestamp
+- `last_accessed` is renamed `last_get`
+
+other changes
+
+- `last_set` added
+- `print` shows size, not value
+- `T` supported as unit size ;)
+
+---
 
 In memory caches for R. Currently implements LRU cache with size parameter.
 
