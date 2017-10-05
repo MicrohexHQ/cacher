@@ -35,6 +35,11 @@ LRUcache_ <- R6::R6Class("LRUcache_",
       stopifnot(name %in% ls(private$data))
       private$peek(name)
     },
+    last_set = function(name) {
+      stopifnot(is.character(name) && length(name) == 1)
+      stopifnot(name %in% ls(private$data))
+      private$data[[name]]$last_set
+    },
     print = function() {
       cat(sprintf("<LRUcache> of capacity %0.f%s", private$max_num, private$units),
           toString(private$format_cache())
@@ -49,6 +54,7 @@ LRUcache_ <- R6::R6Class("LRUcache_",
     save    = function(name, value) {
       # Check if this value alone exceeds the cache size
       size <- private$get_new_item_size(value)
+      time <- Sys.time()
       if (size > private$max_num) {
         warning(sprintf("In package cacher: '%s' is too large (%0.f%s) to fit in the cache (%0.f%s) and will
           not be cached. Consider creating a larger cache.",
@@ -57,7 +63,7 @@ LRUcache_ <- R6::R6Class("LRUcache_",
       }
       # Check for eviction
       while (private$check_for_eviction(name, size)) { private$evict() }
-      private$data[[name]] <- list(value = value, last_get = Sys.time())
+      private$data[[name]] <- list(value = value, last_get = time, last_set = time)
     },
     fetch   = function(name) {
       private$data[[name]]$last_get <- Sys.time()
@@ -75,7 +81,7 @@ LRUcache_ <- R6::R6Class("LRUcache_",
     },
     format_cache = function() {
       format(plyr::ldply(as.list(private$data),
-        .fun = function(x) { data.frame("timestamp" = x$last_get, "value" = x$value ) } ))
+        .fun = function(x) { data.frame("last_get" = x$last_get, "last_set" = x$last_set, "value" = x$value ) } ))
     },
     check_for_eviction = function(name, size) {
       private$get_current_size() + size > private$max_num && !(name %in% ls(private$data))
