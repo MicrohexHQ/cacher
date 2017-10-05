@@ -63,7 +63,7 @@ LRUcache_ <- R6::R6Class("LRUcache_",
       }
       # Check for eviction
       while (private$check_for_eviction(name, size)) { private$evict() }
-      private$data[[name]] <- list(value = value, last_get = time, last_set = time)
+      private$data[[name]] <- list(value = value, last_get = time, last_set = time, size = size)
     },
     fetch   = function(name) {
       private$data[[name]]$last_get <- Sys.time()
@@ -77,7 +77,7 @@ LRUcache_ <- R6::R6Class("LRUcache_",
     },
     format_cache = function() {
       format(plyr::ldply(as.list(private$data),
-        .fun = function(x) { data.frame("last_get" = x$last_get, "last_set" = x$last_set, "value" = x$value ) } ))
+        .fun = function(x) { data.frame("last_get" = x$last_get, "last_set" = x$last_set, "size" = x$size ) } ))
     },
     check_for_eviction = function(name, size) {
       private$get_current_size() + size > private$max_num && !(name %in% ls(private$data))
