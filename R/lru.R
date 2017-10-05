@@ -52,25 +52,25 @@ LRUcache_ <- R6::R6Class("LRUcache_",
       }
       # Check for eviction
       while (private$check_for_eviction(name, size)) { private$evict() }
-      private$data[[name]] <- list(value = value, timestamp = Sys.time())
+      private$data[[name]] <- list(value = value, last_get = Sys.time())
     },
     fetch   = function(name) {
-      private$data[[name]]$timestamp <- Sys.time()
+      private$data[[name]]$last_get <- Sys.time()
       private$data[[name]]$value
     },
     peek    = function(name) {
-      # Do not update the timestamp on peek
-      private$data[[name]]$timestamp
+      # Do not update the last_get on peek
+      private$data[[name]]$last_get
     },
     evict   = function() {
       # This is very LRU specific. Evict the last used variable
-      times  <- sapply(private$data, function(elem) elem$timestamp)
+      times  <- sapply(private$data, function(elem) elem$last_get)
       oldest <- names(which.min(times))
       rm(list = oldest, envir = private$data)
     },
     format_cache = function() {
       format(plyr::ldply(as.list(private$data),
-        .fun = function(x) { data.frame("timestamp" = x$timestamp, "value" = x$value) } ))
+        .fun = function(x) { data.frame("timestamp" = x$last_get, "value" = x$value ) } ))
     },
     check_for_eviction = function(name, size) {
       private$get_current_size() + size > private$max_num && !(name %in% ls(private$data))
